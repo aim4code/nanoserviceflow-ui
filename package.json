@@ -13,13 +13,14 @@
     "unitask",
     "navigation"
   ],
+  "dependencies": {
+    "com.aim4code.nanoserviceflow": "0.2.1",
+    "com.unity.test-framework": "1.4.6",
+    "com.cysharp.unitask": "2.5.10"
+  },
   "author": {
     "name": "aim4code",
     "url": "https://github.com/aim4code"
   },
-  "dependencies": {
-    "com.aim4code.nanoserviceflow": "0.2.0",
-    "com.unity.test-framework": "1.6.0",
-    "com.cysharp.unitask": "2.5.10"
-  }
+  "license": "MIT"
 }
