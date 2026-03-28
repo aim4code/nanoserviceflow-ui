@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root.
 // ============================================================================
 
+using System.Reflection;
 using Aim4code.NanoServiceFlow;
 using UnityEngine;
 
@@ -20,7 +21,14 @@ namespace Aim4code.NanoServiceFlow.UI.Tests
     // 3. Mock Provider for Component testing
     public class TestUIProvider : UIRootProvider
     {
-        public override string RootKey => "TestUI";
         public override UIRootState GetState() => ServiceLocator.Get<TestUIState>();
+        
+        private void Awake()
+        {
+            // Simulate the Unity Inspector injecting the serialized field
+            typeof(UIRootProvider)
+                .GetField("_rootKey", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.SetValue(this, "TestUI");
+        }
     }
 }

@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root.
 // ============================================================================
 
+using System.Reflection;
 using NUnit.Framework;
 using Aim4code.NanoServiceFlow;
 using UnityEngine;
@@ -41,27 +42,36 @@ namespace Aim4code.NanoServiceFlow.UI.Tests
         {
             // Arrange: Build a virtual Unity hierarchy in memory
             var canvasGO = new GameObject("Canvas");
+            canvasGO.SetActive(false); // SUPPRESS AWAKE()
+
             canvasGO.AddComponent<TestUIProvider>();
 
             var layerGO = new GameObject("Modals");
             layerGO.transform.SetParent(canvasGO.transform);
             var locProvider = layerGO.AddComponent<UILocationProvider>();
-            locProvider.LocationName = "Modals";
+            
+            // Inject LocationName
+            typeof(UILocationProvider)
+                .GetField("_locationName", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.SetValue(locProvider, "Modals");
 
             var panelGO = new GameObject("MyPanel");
             panelGO.transform.SetParent(layerGO.transform);
-            
-            // Act: AddComponent automatically calls Awake() in EditMode
             var panel = panelGO.AddComponent<UIPanel>();
-            panel.PanelId = "ShopScreen";
             
-            // Trigger the open action. If Awake() worked, the router knows about 'ShopScreen'
+            // Inject PanelId
+            typeof(UIPanel)
+                .GetField("_panelId", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.SetValue(panel, "ShopScreen");
+            
+            // Act: Reactivate to fire Awake() naturally across the hierarchy!
+            canvasGO.SetActive(true);
+            
             ServiceLocator.Dispatch(new OpenScreenAction("ShopScreen"));
 
-            // Assert: The panel successfully wired itself up to the system
+            // Assert
             Assert.IsTrue(_state.ActivePanels.Value.Contains("ShopScreen"));
 
-            // Cleanup
             Object.DestroyImmediate(canvasGO);
         }
 
@@ -70,29 +80,39 @@ namespace Aim4code.NanoServiceFlow.UI.Tests
         {
             // Arrange
             var canvasGO = new GameObject("Canvas");
+            canvasGO.SetActive(false); // SUPPRESS AWAKE()
+
             canvasGO.AddComponent<TestUIProvider>();
 
             var layerGO = new GameObject("Modals");
             layerGO.transform.SetParent(canvasGO.transform);
             var locProvider = layerGO.AddComponent<UILocationProvider>();
-            locProvider.LocationName = "Modals";
+            
+            typeof(UILocationProvider)
+                .GetField("_locationName", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.SetValue(locProvider, "Modals");
 
             var panelGO = new GameObject("MyPanel");
             panelGO.transform.SetParent(layerGO.transform);
-            
             var panel = panelGO.AddComponent<UIPanel>();
-            panel.PanelId = "ShopScreen";
+            
+            typeof(UIPanel)
+                .GetField("_panelId", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.SetValue(panel, "ShopScreen");
 
-            // Act: Destroy the panel (simulating scene unload)
+            canvasGO.SetActive(true); // Fire Awake()
+
+            // Act: Destroy the panel
             Object.DestroyImmediate(panelGO);
 
-            // Attempt to open the screen after it was destroyed
+            // Need to manually dispatch Unregister here if your UIPanel.OnDestroy doesn't do it automatically yet
+            // ServiceLocator.Dispatch(new UnregisterUIRouteAction("ShopScreen"));
+
             ServiceLocator.Dispatch(new OpenScreenAction("ShopScreen"));
 
-            // Assert: The screen should not be added to the state, as its route was unregistered
+            // Assert
             Assert.IsFalse(_state.ActivePanels.Value.Contains("ShopScreen"));
 
-            // Cleanup
             Object.DestroyImmediate(canvasGO);
         }
     }
