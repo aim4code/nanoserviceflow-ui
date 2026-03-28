@@ -28,17 +28,10 @@ namespace Aim4code.NanoServiceFlow.UI.Editor
             _isInitialized = true;
         }
 
-        // Tell the Unity Inspector how much vertical space we need
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             Initialize();
-
-            // If the database is missing, we request 2.5 lines of space to fit the Error Box and Button
-            if (_database == null)
-            {
-                return EditorGUIUtility.singleLineHeight * 2.5f;
-            }
-
+            if (_database == null) return EditorGUIUtility.singleLineHeight * 2.5f; 
             return EditorGUIUtility.singleLineHeight;
         }
 
@@ -58,38 +51,51 @@ namespace Aim4code.NanoServiceFlow.UI.Editor
                 return;
             }
 
+            // --- Calculate Layout Space ---
+            float buttonWidth = 45f;
+            // Shrink the popup width to leave room for the button
+            Rect popupRect = new Rect(position.x, position.y, position.width - buttonWidth - 2f, position.height);
+            // Place the button at the far right
+            Rect buttonRect = new Rect(position.x + position.width - buttonWidth, position.y, buttonWidth, position.height);
+
+            // --- Draw the Shortcut Button ---
+            if (GUI.Button(buttonRect, new GUIContent("Edit", "Selects the Routing Database in the Project Window")))
+            {
+                // Changes the Inspector to show the Database
+                Selection.activeObject = _database;
+                // Makes the asset flash yellow in the Project window hierarchy
+                EditorGUIUtility.PingObject(_database);
+            }
+
             string[] options = GetOptions(_database);
+        
             if (options == null || options.Length == 0)
             {
-                EditorGUI.PropertyField(position, property, label);
+                EditorGUI.BeginDisabledGroup(true);
+                EditorGUI.Popup(popupRect, label.text, 0, new[] { "[ List is Empty ]" });
+                EditorGUI.EndDisabledGroup();
                 return;
             }
 
             int currentIndex = Mathf.Max(0, System.Array.IndexOf(options, property.stringValue));
-            currentIndex = EditorGUI.Popup(position, label.text, currentIndex, options);
+        
+            // Use the shrunken popupRect here instead of position!
+            currentIndex = EditorGUI.Popup(popupRect, label.text, currentIndex, options);
             property.stringValue = options[currentIndex];
         }
 
         private void DrawMissingDatabaseError(Rect position, GUIContent label)
         {
-            // 1. Draw the standard property label on the left so it aligns with everything else
-            Rect labelRect = new Rect(position.x, position.y, EditorGUIUtility.labelWidth,
-                EditorGUIUtility.singleLineHeight);
+            Rect labelRect = new Rect(position.x, position.y, EditorGUIUtility.labelWidth, EditorGUIUtility.singleLineHeight);
             EditorGUI.LabelField(labelRect, label);
 
-            // 2. Calculate the remaining space for the error and button
             float remainingWidth = position.width - EditorGUIUtility.labelWidth;
             float buttonWidth = 80f;
 
-            Rect helpBoxRect = new Rect(position.x + EditorGUIUtility.labelWidth, position.y,
-                remainingWidth - buttonWidth - 5, position.height);
-
-            // Center the button vertically in the allocated space
+            Rect helpBoxRect = new Rect(position.x + EditorGUIUtility.labelWidth, position.y, remainingWidth - buttonWidth - 5, position.height);
             float buttonHeight = EditorGUIUtility.singleLineHeight * 1.5f;
-            Rect buttonRect = new Rect(position.x + position.width - buttonWidth,
-                position.y + (position.height - buttonHeight) / 2f, buttonWidth, buttonHeight);
+            Rect buttonRect = new Rect(position.x + position.width - buttonWidth, position.y + (position.height - buttonHeight) / 2f, buttonWidth, buttonHeight);
 
-            // 3. Draw the Error Box
             EditorGUI.HelpBox(helpBoxRect, "Routing DB missing!", MessageType.Error);
 
             // 4. Draw the Create Button
