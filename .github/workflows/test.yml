@@ -36,5 +36,7 @@ jobs:
         with:
           projectPath: TempPackage # Point to the newly created temporary folder
           packageMode: true        # Tells GameCI to generate a host project automatically
+          scopedRegistryUrl: 'https://package.openupm.com'
+          registryScopes: 'com.aim4code, com.cysharp'
           unityVersion: ${{ matrix.unityVersion }} # MUST be explicitly set; 'auto' does not work in packageMode
           githubToken: ${{ secrets.GITHUB_TOKEN }}
