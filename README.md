@@ -1,7 +1,10 @@
 # NanoServiceFlow.UI
 
 [![Test](https://github.com/aim4code/nanoserviceflow-ui/actions/workflows/test.yml/badge.svg)](https://github.com/aim4code/nanoserviceflow-ui/actions)
-[![](https://img.shields.io/badge/Unity-2022.3+-57b9d3.svg?style=flat&logo=unity)](https://unity.com/)
+[![openupm](https://img.shields.io/npm/v/com.aim4code.nanoserviceflow.ui?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.aim4code.nanoserviceflow.ui/)
+![](https://img.shields.io/badge/Unity-2022.3+-57b9d3.svg?style=flat&logo=unity)(https://unity.com/)
+![last-commit](https://img.shields.io/github/last-commit/aim4code/nanoserviceflow)
+![open-issues](https://img.shields.io/github/issues/aim4code/nanoserviceflow)
 
 > **A reactive, event-driven UI framework for Unity built on NanoServiceFlow. It features hierarchy-based auto-routing, async UniTask transitions, and multi-canvas support.**
 
