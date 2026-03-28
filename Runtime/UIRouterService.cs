@@ -27,8 +27,8 @@ namespace Aim4code.NanoServiceFlow.UI
             _routingTable.Remove(action.PanelId);
         }
 
-        [SideEffect]
-        public void RouteScreenRequest(OpenScreenAction action)
+        [Reducer]
+        public void OnOpenScreen(OpenScreenAction action)
         {
             if (_routingTable.TryGetValue(action.PanelId, out var route))
             {

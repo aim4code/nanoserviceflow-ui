@@ -9,7 +9,11 @@ namespace Aim4code.NanoServiceFlow.UI
 {
     public abstract class UIRootProvider : MonoBehaviour
     {
-        public abstract string RootKey { get; }
+        [SerializeField, UIRootDropdown]
+        private string _rootKey;
+
+        public string RootKey => _rootKey;
+
         public abstract UIRootState GetState();
     }
 }

@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Aim4code.NanoServiceFlow;
 using Cysharp.Threading.Tasks;
 
 namespace Aim4code.NanoServiceFlow.UI
@@ -16,7 +15,10 @@ namespace Aim4code.NanoServiceFlow.UI
     {
         [Header("Identity")]
         [Tooltip("The unique ID used to open this panel (e.g., 'SettingsMenu')")]
-        public string PanelId;
+        [SerializeField, UIPanelDropdown]
+        private string _panelId;
+
+        public string PanelId => _panelId;
         
         [Tooltip("If false, this panel reacts to state but won't register with the global router.")]
         public bool RegisterWithRouter = true;

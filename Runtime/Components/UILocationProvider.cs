@@ -11,7 +11,10 @@ namespace Aim4code.NanoServiceFlow.UI
     public class UILocationProvider : MonoBehaviour
     {
         [Tooltip("The name of this UI layer (e.g., 'Modals', 'MainStack', 'Overlays')")]
-        public string LocationName;
+        [SerializeField, UILocationDropdown]
+        private string _locationName;
+
+        public string LocationName => _locationName;
         
         public SemaphoreSlim TransitionLock { get; } = new SemaphoreSlim(1, 1);
     }
