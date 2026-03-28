@@ -7,6 +7,8 @@ using System.Reflection;
 using NUnit.Framework;
 using Aim4code.NanoServiceFlow;
 using UnityEngine;
+using UnityEngine.TestTools;
+using System.Text.RegularExpressions;
 
 namespace Aim4code.NanoServiceFlow.UI.Tests
 {
@@ -40,33 +42,30 @@ namespace Aim4code.NanoServiceFlow.UI.Tests
         [Test]
         public void UIPanel_Awake_AutoRegistersRoute_BasedOnHierarchy()
         {
-            // Arrange: Build a virtual Unity hierarchy in memory
+            // Arrange
             var canvasGO = new GameObject("Canvas");
-            canvasGO.SetActive(false); // SUPPRESS AWAKE()
+            canvasGO.SetActive(false); // Suppress automatic Awake on AddComponent
 
-            canvasGO.AddComponent<TestUIProvider>();
+            var rootProvider = canvasGO.AddComponent<TestUIProvider>();
+            typeof(UIRootProvider).GetField("_rootKey", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(rootProvider, "TestUI");
 
             var layerGO = new GameObject("Modals");
             layerGO.transform.SetParent(canvasGO.transform);
             var locProvider = layerGO.AddComponent<UILocationProvider>();
-            
-            // Inject LocationName
-            typeof(UILocationProvider)
-                .GetField("_locationName", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(locProvider, "Modals");
+            typeof(UILocationProvider).GetField("_locationName", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(locProvider, "Modals");
 
             var panelGO = new GameObject("MyPanel");
             panelGO.transform.SetParent(layerGO.transform);
             var panel = panelGO.AddComponent<UIPanel>();
-            
-            // Inject PanelId
-            typeof(UIPanel)
-                .GetField("_panelId", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(panel, "ShopScreen");
-            
-            // Act: Reactivate to fire Awake() naturally across the hierarchy!
+            typeof(UIPanel).GetField("_panelId", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(panel, "ShopScreen");
+
+            // 1. CRITICAL FIX: Reactivate the hierarchy so GetComponentInParent can see them!
             canvasGO.SetActive(true);
-            
+
+            // 2. Act: Now trigger Awake manually while they are active
+            typeof(UIPanel).GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(panel, null);
+
+            // Attempt to open the screen
             ServiceLocator.Dispatch(new OpenScreenAction("ShopScreen"));
 
             // Assert
@@ -80,37 +79,40 @@ namespace Aim4code.NanoServiceFlow.UI.Tests
         {
             // Arrange
             var canvasGO = new GameObject("Canvas");
-            canvasGO.SetActive(false); // SUPPRESS AWAKE()
+            canvasGO.SetActive(false); 
 
-            canvasGO.AddComponent<TestUIProvider>();
+            var rootProvider = canvasGO.AddComponent<TestUIProvider>();
+            typeof(UIRootProvider).GetField("_rootKey", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(rootProvider, "TestUI");
 
             var layerGO = new GameObject("Modals");
             layerGO.transform.SetParent(canvasGO.transform);
             var locProvider = layerGO.AddComponent<UILocationProvider>();
-            
-            typeof(UILocationProvider)
-                .GetField("_locationName", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(locProvider, "Modals");
+            typeof(UILocationProvider).GetField("_locationName", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(locProvider, "Modals");
 
             var panelGO = new GameObject("MyPanel");
             panelGO.transform.SetParent(layerGO.transform);
             var panel = panelGO.AddComponent<UIPanel>();
-            
-            typeof(UIPanel)
-                .GetField("_panelId", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(panel, "ShopScreen");
+            typeof(UIPanel).GetField("_panelId", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(panel, "ShopScreen");
 
-            canvasGO.SetActive(true); // Fire Awake()
+            // 1. Reactivate the hierarchy
+            canvasGO.SetActive(true); 
+
+            // 2. Fire Awake manually
+            typeof(UIPanel).GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(panel, null);
+
+            // 3. Fire OnDestroy manually to guarantee it executes in Edit Mode!
+            typeof(UIPanel).GetMethod("OnDestroy", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(panel, null);
 
             // Act: Destroy the panel
             Object.DestroyImmediate(panelGO);
 
-            // Need to manually dispatch Unregister here if your UIPanel.OnDestroy doesn't do it automatically yet
-            // ServiceLocator.Dispatch(new UnregisterUIRouteAction("ShopScreen"));
+            // EXPECT THE ERROR: Tell Unity we expect a log about ShopScreen missing
+            LogAssert.Expect(LogType.Error, new System.Text.RegularExpressions.Regex(".*Cannot open 'ShopScreen'.*"));
 
+            // Attempt to open the screen after it was destroyed
             ServiceLocator.Dispatch(new OpenScreenAction("ShopScreen"));
 
-            // Assert
+            // Assert: The route was unregistered, so the Router blocked the request, leaving the state clean!
             Assert.IsFalse(_state.ActivePanels.Value.Contains("ShopScreen"));
 
             Object.DestroyImmediate(canvasGO);

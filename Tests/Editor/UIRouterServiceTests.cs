@@ -4,8 +4,10 @@
 // ============================================================================
 
 using NUnit.Framework;
+using System.Text.RegularExpressions;
 using Aim4code.NanoServiceFlow;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace Aim4code.NanoServiceFlow.UI.Tests
 {
@@ -55,6 +57,9 @@ namespace Aim4code.NanoServiceFlow.UI.Tests
         {
             ServiceLocator.Dispatch(new RegisterUIRouteAction("Inventory", "TestUI", "Modals"));
             ServiceLocator.Dispatch(new UnregisterUIRouteAction("Inventory"));
+            
+            // 1. EXPECT THE ERROR: Tell Unity not to fail the test when it sees this error!
+            LogAssert.Expect(LogType.Error, new Regex(".*Cannot open 'Inventory'.*"));
 
             // Act: Try to open an unregistered screen
             ServiceLocator.Dispatch(new OpenScreenAction("Inventory"));

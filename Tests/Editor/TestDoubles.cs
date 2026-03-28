@@ -22,13 +22,5 @@ namespace Aim4code.NanoServiceFlow.UI.Tests
     public class TestUIProvider : UIRootProvider
     {
         public override UIRootState GetState() => ServiceLocator.Get<TestUIState>();
-        
-        private void Awake()
-        {
-            // Simulate the Unity Inspector injecting the serialized field
-            typeof(UIRootProvider)
-                .GetField("_rootKey", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(this, "TestUI");
-        }
     }
 }
