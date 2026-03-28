@@ -1,0 +1,20 @@
+{
+    "name": "Aim4code.NanoServiceFlow.UI.Editor",
+    "rootNamespace": "",
+    "references": [
+        "Aim4code.NanoServiceFlow.UI",
+        "Aim4code.NanoServiceFlow",
+        "UniTask"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
