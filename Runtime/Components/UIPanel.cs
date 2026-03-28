@@ -86,7 +86,7 @@ namespace Aim4code.NanoServiceFlow.UI
 
             if (_isVisible)
             {
-                // SHOW PRIORITY: Yield one frame to ensure any hiding panels grab the lock first
+                // Yield one frame to ensure any hiding panels grab the lock first
                 await UniTask.Yield(PlayerLoopTiming.Update, token);
 
                 await _locationProvider.TransitionLock.WaitAsync(token);
@@ -105,7 +105,7 @@ namespace Aim4code.NanoServiceFlow.UI
             }
             else
             {
-                // HIDE PRIORITY: Grab the lock instantly
+                // Grab the lock instantly
                 await _locationProvider.TransitionLock.WaitAsync(token);
                 try
                 {

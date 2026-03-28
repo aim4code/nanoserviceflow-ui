@@ -48,24 +48,30 @@ namespace Aim4code.NanoServiceFlow.UI
         [Reducer]
         public void OnPopPanel(PopPanelAction action)
         {
+            // 1. Ignore if it's not for this Canvas
             if (action.RootKey != _rootKey) return;
-            if (!_state.LocationStacks.ContainsKey(action.Location)) return;
 
-            var stack = _state.LocationStacks[action.Location];
-            if (stack.Count <= 1) return; // Prevent popping the base layer
+            // 2. Ignore if the location doesn't exist or is already empty
+            if (!_state.LocationStacks.TryGetValue(action.Location, out var stack) || stack.Count == 0) return;
 
-            var panels = new HashSet<string>(_state.ActivePanels.Value);
-            
-            // Remove current top
-            var currentTop = stack[stack.Count - 1];
+            // 3. Create a fresh copy of the active panels to safely modify
+            var nextActivePanels = new System.Collections.Generic.HashSet<string>(_state.ActivePanels.Value);
+
+            // 4. Identify the panel we are removing and take it out of the stack and our new set
+            string panelToRemove = stack[stack.Count - 1];
             stack.RemoveAt(stack.Count - 1);
-            panels.Remove(currentTop);
+            nextActivePanels.Remove(panelToRemove);
 
-            // Show the new top
-            var newTop = stack[stack.Count - 1];
-            panels.Add(newTop);
+            // 5. IF there is another panel underneath it, reveal it!
+            if (stack.Count > 0)
+            {
+                string panelToReveal = stack[stack.Count - 1];
+                nextActivePanels.Add(panelToReveal);
+            }
 
-            _state.ActivePanels.Value = panels;
+            // 6. Assign the new collection back to the state. 
+            // This assignment is what actually triggers the Views to run their fade animations!
+            _state.ActivePanels.Value = nextActivePanels;
         }
 
         [Reducer]
