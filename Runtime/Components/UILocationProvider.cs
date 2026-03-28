@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root.
 // ============================================================================
 
+using System.Threading;
 using UnityEngine;
 
 namespace Aim4code.NanoServiceFlow.UI
@@ -11,5 +12,7 @@ namespace Aim4code.NanoServiceFlow.UI
     {
         [Tooltip("The name of this UI layer (e.g., 'Modals', 'MainStack', 'Overlays')")]
         public string LocationName;
+        
+        public SemaphoreSlim TransitionLock { get; } = new SemaphoreSlim(1, 1);
     }
 }

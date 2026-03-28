@@ -76,7 +76,7 @@ namespace Aim4code.NanoServiceFlow.UI
         {
             bool shouldBeVisible = activePanels.Contains(PanelId);
             if (shouldBeVisible == _isVisible) return;
-            
+        
             _isVisible = shouldBeVisible;
 
             _canvasGroup.interactable = false;
@@ -86,16 +86,36 @@ namespace Aim4code.NanoServiceFlow.UI
 
             if (_isVisible)
             {
-                if (_transition != null) await _transition.PlayShowAsync(token);
-                else _canvasGroup.alpha = 1f;
+                // SHOW PRIORITY: Yield one frame to ensure any hiding panels grab the lock first
+                await UniTask.Yield(PlayerLoopTiming.Update, token);
+
+                await _locationProvider.TransitionLock.WaitAsync(token);
+                try
+                {
+                    if (_transition != null) await _transition.PlayShowAsync(token);
+                    else _canvasGroup.alpha = 1f;
                 
-                _canvasGroup.interactable = true;
-                _canvasGroup.blocksRaycasts = true;
+                    _canvasGroup.interactable = true;
+                    _canvasGroup.blocksRaycasts = true;
+                }
+                finally
+                {
+                    _locationProvider.TransitionLock.Release();
+                }
             }
             else
             {
-                if (_transition != null) await _transition.PlayHideAsync(token);
-                else _canvasGroup.alpha = 0f;
+                // HIDE PRIORITY: Grab the lock instantly
+                await _locationProvider.TransitionLock.WaitAsync(token);
+                try
+                {
+                    if (_transition != null) await _transition.PlayHideAsync(token);
+                    else _canvasGroup.alpha = 0f;
+                }
+                finally
+                {
+                    _locationProvider.TransitionLock.Release();
+                }
             }
         }
 
