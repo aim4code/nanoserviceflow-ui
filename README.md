@@ -12,10 +12,10 @@ NanoServiceFlow.UI extends the core event-driven architecture to the presentatio
 
 ## Key Features
 
-* **Hierarchy-Based Auto-Discovery:** Designers build UI naturally in the Unity Canvas. `UIPanel` components automatically look up their parent hierarchy to figure out which Canvas and Layer they belong to and register themselves with the global router. No magic strings in the inspector!
+* **Hierarchy-Based Auto-Discovery:** Designers build UI naturally in the Unity Canvas. `UIPanel` components automatically look up their parent hierarchy to figure out which Canvas and Layer they belong to and register themselves with the global router.
 * **Keyed Multi-System Support:** Easily support additive scenes or multiple Canvases (e.g., `GlobalUI`, `GameHUD`, `WorldSpaceUI`) with isolated navigation stacks.
 * **Async/Await Workflow:** Fully integrated with `UniTask`. Safely await complex UI transitions (like screen fades) before proceeding with game logic. Input is safely guarded during animations.
-* **Designer-Friendly:** Designers never touch C# code. They drop a script, type a `PanelId`, and use simple event dispatchers to navigate.
+* **Designer-Friendly & Zero Magic Strings:** Designers never touch C# code. Routing configurations are managed in a centralized `UIRoutingDatabase` ScriptableObject. Components like `UIPanel` use custom Inspector Dropdowns to select `PanelId`, `Location`, and `RootKey`, completely eliminating typo-prone magic strings!
 
 ## Installation
 
@@ -82,21 +82,24 @@ public class MainUIService : UIServiceBase<MainUIState>
 // 3. The Unity Component (Attach to your Canvas)
 public class MainUIProvider : UIRootProvider
 {
-    public override string RootKey => "MainUI";
+    // Note: RootKey is configured via the Inspector Dropdown on the UIRootProvider component.
     public override UIRootState GetState() => ServiceLocator.Get<MainUIState>();
 }
 ```
 
 ### 2. Setup the View (Unity Hierarchy)
 
-Designers build out the canvas hierarchy in the Unity Editor using the provided base components. The framework discovers them automatically:
+Designers build out the canvas hierarchy in the Unity Editor using the provided base components. They select their routing keys from Dropdowns populated by your central `UIRoutingDatabase`. The framework discovers them automatically:
 
-* **Canvas** `[MainUIProvider]`
-  * **MainStack GameObject** `[UILocationProvider: LocationName="MainStack"]`
-    * **MainMenu Panel** `[UIPanel: PanelId="MainMenu"]`
-    * **Settings Panel** `[UIPanel: PanelId="SettingsMenu"]`
-  * **Overlays GameObject** `[UILocationProvider: LocationName="Overlays"]`
-    * **Loading Screen** `[UIPanel: PanelId="LoadingScreen"]`
+* **Canvas** `[MainUIProvider: RootKey Dropdown="MainUI"]`
+  * **MainStack GameObject** `[UILocationProvider: LocationName Dropdown="MainStack"]`
+    * **MainMenu Panel** `[UIPanel: PanelId Dropdown="MainMenu"]`
+    * **Settings Panel** `[UIPanel: PanelId Dropdown="SettingsMenu"]`
+  * **Overlays GameObject** `[UILocationProvider: LocationName Dropdown="Overlays"]`
+    * **Loading Screen** `[UIPanel: PanelId Dropdown="LoadingScreen", RegisterWithRouter=false]`
+
+> [!TIP]
+> You can easily detach a `UIPanel` from the global router by unchecking the `RegisterWithRouter` toggle in the inspector. This is perfect for local reactive UI elements that only listen to state!
 
 ### 3. Bootstrap the Architecture
 

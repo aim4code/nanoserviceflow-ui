@@ -16,4 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Action structs for intent-level routing (`OpenScreenAction`).
 - `UIRootProvider` and `UILocationProvider` components to allow hierarchy-based dependency resolution.
 - `UIPanel` component handling safe `CanvasGroup` raycast toggling and state-bound visibility.
+- `UIPanel` now includes a `RegisterWithRouter` toggle for pure reactive UI elements that bypass global navigation.
 - `IUITransition` interface to integrate with `UniTask` for asynchronous visual animations.
+- `UIRoutingDatabase` ScriptableObject to systematically configure Roots, Locations, and Panels centrally.
+- `[UIRootDropdown]`, `[UILocationDropdown]`, and `[UIPanelDropdown]` attributes alongside Editor Property Drawers to completely eliminate magic strings by replacing them with inspector dropdowns.
+
+### Changed
+
+- Refactored `UIRootProvider` so that `RootKey` is now a generic serialized field configured via inspector dropdowns rather than an abstract C# property override.
