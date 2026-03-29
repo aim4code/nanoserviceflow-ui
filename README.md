@@ -1,6 +1,6 @@
 # NanoServiceFlow.UI
 
-[![Test](https://github.com/aim4code/nanoserviceflow-ui/actions/workflows/test.yml/badge.svg)](https://github.com/aim4code/nanoserviceflow-ui/actions)
+[![CI](https://github.com/aim4code/nanoserviceflow-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/aim4code/nanoserviceflow-ui/actions)
 [![openupm](https://img.shields.io/npm/v/com.aim4code.nanoserviceflow.ui?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.aim4code.nanoserviceflow.ui/)
 [![](https://img.shields.io/badge/Unity-2022.3+-57b9d3.svg?style=flat&logo=unity)](https://unity.com/)
 ![last-commit](https://img.shields.io/github/last-commit/aim4code/nanoserviceflow)
