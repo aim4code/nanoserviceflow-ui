@@ -1,0 +1,26 @@
+{
+  "name": "com.aim4code.nanoserviceflow.ui",
+  "version": "0.1.0",
+  "displayName": "NanoServiceFlow - UI",
+  "description": "A reactive, event-driven UI framework for Unity built on NanoServiceFlow. Features hierarchy-based auto-routing, async UniTask transitions, and multi-canvas support to separate UI state, logic, and views.",
+  "unity": "2022.3",
+  "keywords": [
+    "nanoserviceflow",
+    "ui",
+    "state-management",
+    "redux",
+    "zustand",
+    "unitask",
+    "navigation"
+  ],
+  "dependencies": {
+    "com.aim4code.nanoserviceflow": "0.2.1",
+    "com.unity.test-framework": "1.4.6",
+    "com.cysharp.unitask": "2.5.10"
+  },
+  "author": {
+    "name": "aim4code",
+    "url": "https://github.com/aim4code"
+  },
+  "license": "MIT"
+}

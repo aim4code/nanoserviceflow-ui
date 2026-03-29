@@ -1,0 +1,42 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    name: Run Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        unityVersion:
+        - 2022.3.62f3
+        - 6000.3.6f1
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # WORKAROUND: GameCI hangs if packageMode is used on the repo root.
+      # This script moves all files (including hidden ones) into a folder called 'TempPackage', 
+      # while safely ignoring the .git and .github folders so GitHub Actions doesn't break.
+      - name: Move package to subdirectory
+        run: |
+          mkdir TempPackage
+          shopt -s extglob dotglob
+          mv !(TempPackage|.git|.github) TempPackage/
+
+      - name: Run Unity Tests
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: TempPackage # Point to the newly created temporary folder
+          packageMode: true        # Tells GameCI to generate a host project automatically
+          scopedRegistryUrl: 'https://package.openupm.com'
+          registryScopes: 'com.aim4code, com.cysharp'
+          unityVersion: ${{ matrix.unityVersion }} # MUST be explicitly set; 'auto' does not work in packageMode
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
