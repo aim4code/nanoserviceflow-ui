@@ -5,14 +5,6 @@ inputs:
   unityVersion:
     description: 'The Unity version to use (e.g., 2022.3.62f3)'
     required: true
-  scopedRegistryUrl:
-    description: 'Optional OpenUPM or other scoped registry URL'
-    required: false
-    default: ''
-  registryScopes:
-    description: 'Comma-separated list of scopes for the registry'
-    required: false
-    default: ''
   projectName:
     description: 'The name of the temporary project folder'
     required: false
@@ -45,30 +37,18 @@ runs:
 
         MANIFEST_PATH="${{ inputs.projectName }}/Packages/manifest.json"
         
-        # Start building the JSON
-        echo '{ "dependencies": { "'$PACKAGE_NAME'": "file:../.." }' > $MANIFEST_PATH
+        # Start building the JSON with properly closed braces
+        echo '{ "dependencies": { "'$PACKAGE_NAME'": "file:../.." } }' > $MANIFEST_PATH
 
-        # 2. Conditionally add Scoped Registries
-        if [ -n "${{ inputs.scopedRegistryUrl }}" ] && [ -n "${{ inputs.registryScopes }}" ]; then
-          # Convert comma-separated scopes to JSON array string
-          # Example: "com.aim4code, com.cysharp" -> ["com.aim4code", "com.cysharp"]
-          SCOPES_JSON=$(echo '"${{ inputs.registryScopes }}"' | sed 's/, /", "/g' | sed 's/,/", "/g')
-          
-          # Append the scopedRegistries block
-          sed -i 's/}$//' $MANIFEST_PATH # Remove trailing bracket to append
-          cat <<EOF >> $MANIFEST_PATH
-        , "scopedRegistries": [
-            {
-              "name": "package.openupm.com",
-              "url": "${{ inputs.scopedRegistryUrl }}",
-              "scopes": [$SCOPES_JSON]
-            }
-          ]
-        }
-EOF
+        # 2. Conditionally merge Scoped Registries
+        REGISTRY_FILE=".github/scoped-registries.json"
+        
+        if [ -f "$REGISTRY_FILE" ]; then
+          echo "Found $REGISTRY_FILE. Merging into manifest.json..."
+          # Use jq to merge the dependencies block with the scopedRegistries object
+          jq -s '.[0] * .[1]' $MANIFEST_PATH $REGISTRY_FILE > tmp.json && mv tmp.json $MANIFEST_PATH
         else
-          # Close the JSON if no registry
-          echo "}" >> $MANIFEST_PATH
+          echo "No $REGISTRY_FILE found. Proceeding with zero dependencies."
         fi
         
         echo "Generated manifest.json:"

@@ -30,8 +30,6 @@ jobs:
         uses: ./.github/actions/setup-unity
         with:
           unityVersion: ${{ matrix.unityVersion }}
-          scopedRegistryUrl: 'https://package.openupm.com'
-          registryScopes: 'com.aim4code, com.cysharp'
           projectName: 'TestProject'
 
       - name: 🧪 Run Unity Tests
