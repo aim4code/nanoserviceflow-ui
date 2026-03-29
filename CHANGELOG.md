@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ci:** automatically detect and merge `.github/scoped-registries.json` to inject OpenUPM dependencies into the test manifest, fully omitting the need for complex YAML workflow inputs
 - **ci:** configure `ci.yml` to use a stable `TestProject` directory, safely enabling `actions/cache` to drastically reduce Unity Engine asset-import times
 
+### Fixed
+
+- **fix:** add `com.unity.ugui` and `com.unity.modules.ui` dependencies to `package.json` to ensure `CanvasGroup` and built-in UI elements successfully compile in headless CI environments
+
 ## [0.1.0] - 2026-03-27
 
 ### Added
