@@ -16,6 +16,7 @@ runs:
     - name: ⚙️ Bootstrap Project Folders
       shell: bash
       run: |
+        mkdir -p ${{ inputs.projectName }}/Assets
         mkdir -p ${{ inputs.projectName }}/ProjectSettings
         mkdir -p ${{ inputs.projectName }}/Packages
 
