@@ -1,0 +1,56 @@
+name: 'Setup Unity'
+description: 'Bootstraps a minimal Unity project structure to enable testing and Library caching for packages.'
+
+inputs:
+  unityVersion:
+    description: 'The Unity version to use (e.g., 2022.3.62f3)'
+    required: true
+  projectName:
+    description: 'The name of the temporary project folder'
+    required: false
+    default: 'TestProject'
+
+runs:
+  using: "composite"
+  steps:
+    - name: ⚙️ Bootstrap Project Folders
+      shell: bash
+      run: |
+        mkdir -p ${{ inputs.projectName }}/Assets
+        mkdir -p ${{ inputs.projectName }}/ProjectSettings
+        mkdir -p ${{ inputs.projectName }}/Packages
+
+    - name: 📝 Generate ProjectVersion.txt
+      shell: bash
+      run: |
+        echo "m_EditorVersion: ${{ inputs.unityVersion }}" > ${{ inputs.projectName }}/ProjectSettings/ProjectVersion.txt
+
+    - name: 📦 Generate manifest.json
+      shell: bash
+      run: |
+        # 1. Initialize dependencies with the local package
+        # We assume the current repo is the package. We link it via file:../..
+        # since TestProject/Packages is two levels deep from the repo root.
+        
+        # Get package name from package.json
+        PACKAGE_NAME=$(cat package.json | grep '"name":' | head -1 | cut -d '"' -f 4)
+        echo "Detected Package Name: $PACKAGE_NAME"
+
+        MANIFEST_PATH="${{ inputs.projectName }}/Packages/manifest.json"
+        
+        # Start building the JSON with properly closed braces
+        echo '{ "dependencies": { "'$PACKAGE_NAME'": "file:../.." } }' > $MANIFEST_PATH
+
+        # 2. Conditionally merge Scoped Registries
+        REGISTRY_FILE=".github/scoped-registries.json"
+        
+        if [ -f "$REGISTRY_FILE" ]; then
+          echo "Found $REGISTRY_FILE. Merging into manifest.json..."
+          # Use jq to merge the dependencies block with the scopedRegistries object
+          jq -s '.[0] * .[1]' $MANIFEST_PATH $REGISTRY_FILE > tmp.json && mv tmp.json $MANIFEST_PATH
+        else
+          echo "No $REGISTRY_FILE found. Proceeding with zero dependencies."
+        fi
+        
+        echo "Generated manifest.json:"
+        cat $MANIFEST_PATH

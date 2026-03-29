@@ -1,0 +1,9 @@
+{
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": ["com.aim4code", "com.cysharp"]
+    }
+  ]
+}
