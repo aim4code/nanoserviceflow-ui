@@ -11,23 +11,26 @@ namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
 {
     public class AppUIService : UIServiceBase<AppUIState>
     {
-        public string LoadingPanelLocation { get; set; } = "Overlays";
-        public string LoadingPanelId { get; set; } = "LoadingPanel";
+        private string _loadingPanelLocation = "Overlays";
+        private string _loadingPanelId = "LoadingPanel";
 
-        public AppUIService(AppUIState state, string rootKey = "AppUI") : base(state, rootKey) { }
+        public AppUIService(AppUIState state) : base(state, "AppUI") { }
 
         [Reducer]
-        public void OnPrepareSceneLoad(PrepareSceneLoadAction action)
+        public void OnConfigureAppUI(ConfigureAppUIAction action)
         {
-            _state.TargetSceneToLoad = action.SceneName;
-            
-            // Open the Loading Screen!
-            ServiceLocator.Dispatch(new PushPanelAction(_rootKey, LoadingPanelLocation, LoadingPanelId));
+            _loadingPanelLocation = action.LoadingPanelLocation;
+            _loadingPanelId = action.LoadingPanelId;
         }
 
         [SideEffect]
         public async void OnLoadSceneAsync(LoadSceneAction action)
         {
+            ServiceLocator.Dispatch(new PushPanelAction(_rootKey, _loadingPanelLocation, _loadingPanelId));
+
+            // Wait briefly to allow the UI to begin fading in before threaded CPU freezing
+            await UniTask.Delay(250);
+
             Debug.Log($"[AppUIService] Attempting to load scene: '{action.SceneName}'...");
             
             if (string.IsNullOrEmpty(action.SceneName))
@@ -74,8 +77,7 @@ namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
 
             Debug.Log("[AppUIService] Scene fully activated! Popping the Loading Panel.");
             
-            // safe to animate the UI away
-            ServiceLocator.Dispatch(new PopPanelAction(_rootKey, LoadingPanelLocation));
+            ServiceLocator.Dispatch(new PopPanelAction(_rootKey, _loadingPanelLocation));
         }
     }
 }

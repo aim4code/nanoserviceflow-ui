@@ -13,7 +13,7 @@ namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
     {
         [Header("Identity")]
         [SerializeField, UIPanelDropdown]
-        private string _panelId = "LoadingPanel";
+        private string _panelId;
 
         [Header("References")]
         [SerializeField]
@@ -42,16 +42,7 @@ namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
             bool wasActive = _isActive;
             _isActive = activePanels.Contains(_panelId);
 
-            if (_isActive && !wasActive)
-            {
-                var state = GetComponentInParent<UIRootProvider>().GetState();
-                if (state is AppUIState appState)
-                {
-                    Debug.Log($"[LoadingScreenUIView] Triggering LoadSceneAction for '{appState.TargetSceneToLoad}'");
-                    ServiceLocator.Dispatch(new LoadSceneAction(appState.TargetSceneToLoad));
-                }
-            }
-            else if (!_isActive && wasActive)
+            if (!_isActive && wasActive)
             {
                 if (_progressBarSlider != null) _progressBarSlider.value = 0f;
             }

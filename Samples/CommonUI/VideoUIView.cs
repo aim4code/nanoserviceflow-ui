@@ -76,7 +76,7 @@ namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
             _isActive = false; 
 
             if (_actionType == AdvanceActionType.LoadScene)
-                ServiceLocator.Dispatch(new PrepareSceneLoadAction(_targetSceneName));
+                ServiceLocator.Dispatch(new LoadSceneAction(_targetSceneName));
             else
                 ServiceLocator.Dispatch(new OpenScreenAction(_nextPanelId));
         }
