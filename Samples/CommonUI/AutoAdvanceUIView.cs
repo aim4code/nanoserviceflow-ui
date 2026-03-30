@@ -8,6 +8,8 @@ using UnityEngine;
 
 namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
 {
+    public enum AdvanceActionType { OpenScreen, LoadScene }
+
     /// <summary>
     /// A generic View that waits for a specific duration (or an input) 
     /// and then correctly routes to the next panel defined via dropdown.
@@ -19,8 +21,14 @@ namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
         [SerializeField, UIPanelDropdown]
         private string _panelId;
         
+        [SerializeField]
+        private AdvanceActionType _actionType = AdvanceActionType.OpenScreen;
+
         [SerializeField, UIPanelDropdown]
         private string _nextPanelId;
+
+        [SerializeField]
+        private string _targetSceneName;
         
         [Header("Timing")]
         [SerializeField]
@@ -62,7 +70,11 @@ namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
             if (_timer >= _displayDuration || (_allowSkip && Input.anyKeyDown))
             {
                 _isActive = false;
-                ServiceLocator.Dispatch(new OpenScreenAction(_nextPanelId));
+                
+                if (_actionType == AdvanceActionType.LoadScene)
+                    ServiceLocator.Dispatch(new PrepareSceneLoadAction(_targetSceneName));
+                else
+                    ServiceLocator.Dispatch(new OpenScreenAction(_nextPanelId));
             }
         }
 

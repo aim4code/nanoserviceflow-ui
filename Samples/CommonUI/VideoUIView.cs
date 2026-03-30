@@ -19,8 +19,14 @@ namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
         [SerializeField, UIPanelDropdown]
         private string _panelId;
         
+        [SerializeField]
+        private AdvanceActionType _actionType = AdvanceActionType.OpenScreen;
+
         [SerializeField, UIPanelDropdown]
         private string _nextPanelId;
+
+        [SerializeField]
+        private string _targetSceneName;
 
         [Header("References")]
         [SerializeField]
@@ -68,7 +74,11 @@ namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
         private void AdvanceToNextScreen()
         {
             _isActive = false; 
-            ServiceLocator.Dispatch(new OpenScreenAction(_nextPanelId));
+
+            if (_actionType == AdvanceActionType.LoadScene)
+                ServiceLocator.Dispatch(new PrepareSceneLoadAction(_targetSceneName));
+            else
+                ServiceLocator.Dispatch(new OpenScreenAction(_nextPanelId));
         }
 
         private void OnDestroy()
