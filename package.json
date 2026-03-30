@@ -24,5 +24,12 @@
     "name": "aim4code",
     "url": "https://github.com/aim4code"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "samples": [
+    {
+      "displayName": "Common UI",
+      "description": "Ready-to-use, decoupled UI components including AppUI scene loaders, generic views, and dynamic visual transitions.",
+      "path": "Samples/CommonUI"
+    }
+  ]
 }
