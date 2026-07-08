@@ -25,5 +25,12 @@
     "name": "aim4code",
     "url": "https://github.com/aim4code"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "samples": [
+    {
+      "displayName": "Quick Start",
+      "description": "A minimal, self-contained navigation example: a UI root with two panels navigated via OpenScreenAction/PopPanelAction, plus a recipe for adding the App-shell scene loader.",
+      "path": "Samples~/QuickStart"
+    }
+  ]
 }
