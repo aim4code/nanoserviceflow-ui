@@ -1,12 +1,12 @@
 // ============================================================================
-// NanoServiceFlow.UI Samples - Common UI
+// NanoServiceFlow.UI - Transitions
 // ============================================================================
 
 using System.Threading;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 
-namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
+namespace Aim4code.NanoServiceFlow.UI
 {
     /// <summary>
     /// Drives an Animator component for transition states, waiting an approximate duration

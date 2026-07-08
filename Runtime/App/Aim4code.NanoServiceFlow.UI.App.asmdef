@@ -1,9 +1,9 @@
 {
-    "name": "Aim4code.NanoServiceFlow.UI.Samples.CommonUI",
-    "rootNamespace": "",
+    "name": "Aim4code.NanoServiceFlow.UI.App",
+    "rootNamespace": "Aim4code.NanoServiceFlow.UI.App",
     "references": [
-        "Aim4code.NanoServiceFlow.UI",
         "Aim4code.NanoServiceFlow",
+        "Aim4code.NanoServiceFlow.UI",
         "UniTask"
     ],
     "includePlatforms": [],

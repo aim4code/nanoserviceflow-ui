@@ -17,6 +17,7 @@
     "com.aim4code.nanoserviceflow": "0.2.1",
     "com.unity.ugui": "1.0.0",
     "com.unity.modules.ui": "1.0.0",
+    "com.unity.modules.video": "1.0.0",
     "com.unity.test-framework": "1.4.6",
     "com.cysharp.unitask": "2.5.10"
   },
@@ -24,12 +25,5 @@
     "name": "aim4code",
     "url": "https://github.com/aim4code"
   },
-  "license": "MIT",
-  "samples": [
-    {
-      "displayName": "Common UI",
-      "description": "Ready-to-use, decoupled UI components including AppUI scene loaders, generic views, and dynamic visual transitions.",
-      "path": "Samples/CommonUI"
-    }
-  ]
+  "license": "MIT"
 }

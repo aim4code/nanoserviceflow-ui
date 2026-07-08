@@ -1,5 +1,5 @@
 // ============================================================================
-// NanoServiceFlow.UI Samples - Common UI
+// NanoServiceFlow.UI - Transitions
 // ============================================================================
 
 using System.Threading;
@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
 
-namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
+namespace Aim4code.NanoServiceFlow.UI
 {
     /// <summary>
     /// Automatically interpolates a Material float property (e.g. _Fade, _Radius) over time.

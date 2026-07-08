@@ -1,5 +1,5 @@
 // ============================================================================
-// NanoServiceFlow.UI Samples - Common UI
+// NanoServiceFlow.UI - App Shell
 // ============================================================================
 
 using System;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 
-namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
+namespace Aim4code.NanoServiceFlow.UI.App
 {
     /// <summary>
     /// A generic View that listens to a VideoPlayer and dispatches to 

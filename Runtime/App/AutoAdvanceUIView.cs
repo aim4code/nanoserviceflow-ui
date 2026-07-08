@@ -1,12 +1,12 @@
 // ============================================================================
-// NanoServiceFlow.UI Samples - Common UI
+// NanoServiceFlow.UI - App Shell
 // ============================================================================
 
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
+namespace Aim4code.NanoServiceFlow.UI.App
 {
     public enum AdvanceActionType { OpenScreen, LoadScene }
 

@@ -1,5 +1,5 @@
 // ============================================================================
-// NanoServiceFlow.UI Samples - Common UI
+// NanoServiceFlow.UI - App Shell
 // ============================================================================
 
 using UnityEngine;
@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 using Aim4code.NanoServiceFlow;
 using Cysharp.Threading.Tasks;
 
-namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
+namespace Aim4code.NanoServiceFlow.UI.App
 {
     public class AppUIService : UIServiceBase<AppUIState>
     {

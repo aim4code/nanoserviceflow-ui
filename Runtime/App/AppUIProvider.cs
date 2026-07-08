@@ -1,10 +1,10 @@
 // ============================================================================
-// NanoServiceFlow.UI Samples - Common UI
+// NanoServiceFlow.UI - App Shell
 // ============================================================================
 
 using UnityEngine;
 
-namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
+namespace Aim4code.NanoServiceFlow.UI.App
 {
     /// <summary>
     /// Attach this component to a Canvas that spans across scenes (DontDestroyOnLoad).

@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on both [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **refactor!:** promoted the former `Samples/CommonUI` code into the package runtime, replacing the sample-folder dependency. Generic transitions (`FadeUITransition`, `AnimatorUITransition`, `MaterialPropertyUITransition`) moved to `Runtime/Transitions/` in the main assembly under the `Aim4code.NanoServiceFlow.UI` namespace. **BREAKING:** these types are no longer in `Aim4code.NanoServiceFlow.UI.Samples.CommonUI`.
+- **refactor!:** the application shell (`AppUIState`/`AppUIService`/`AppUIProvider`, `AppUIActions`, `LoadingScreenUIView`, `AutoAdvanceUIView`, `VideoUIView`, `VideoUITransition`) moved to a new, separately-referenceable assembly `Aim4code.NanoServiceFlow.UI.App` (`Runtime/App/`) under the `Aim4code.NanoServiceFlow.UI.App` namespace. This keeps `SceneManagement`/`Video` opinions out of consumers that only need the navigation core. **BREAKING:** namespace changed from `Aim4code.NanoServiceFlow.UI.Samples.CommonUI`.
+
+### Removed
+
+- **refactor:** removed the `Common UI` sample entry from `package.json` (its code is now shipped as runtime). A thin demo scene should be re-added under `Samples~/` before publishing.
+
 ## [0.1.1] - 2026-03-30
 
 ### Added

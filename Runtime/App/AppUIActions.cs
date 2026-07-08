@@ -1,10 +1,10 @@
 // ============================================================================
-// NanoServiceFlow.UI Samples - Common UI
+// NanoServiceFlow.UI - App Shell
 // ============================================================================
 
 using Aim4code.NanoServiceFlow;
 
-namespace Aim4code.NanoServiceFlow.UI.Samples.CommonUI
+namespace Aim4code.NanoServiceFlow.UI.App
 {
     public readonly struct LoadSceneAction : IAction
     {
