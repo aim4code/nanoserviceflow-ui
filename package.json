@@ -1,6 +1,6 @@
 {
   "name": "com.aim4code.nanoserviceflow.ui",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "displayName": "NanoServiceFlow - UI",
   "description": "A reactive, event-driven UI framework for Unity built on NanoServiceFlow. Features hierarchy-based auto-routing, async UniTask transitions, and multi-canvas support to separate UI state, logic, and views.",
   "unity": "2022.3",
@@ -14,9 +14,11 @@
     "navigation"
   ],
   "dependencies": {
-    "com.aim4code.nanoserviceflow": "0.2.1",
+    "com.aim4code.nanoserviceflow": "0.3.0",
     "com.unity.ugui": "1.0.0",
     "com.unity.modules.ui": "1.0.0",
+    "com.unity.modules.animation": "1.0.0",
+    "com.unity.modules.video": "1.0.0",
     "com.unity.test-framework": "1.4.6",
     "com.cysharp.unitask": "2.5.10"
   },
@@ -24,5 +26,12 @@
     "name": "aim4code",
     "url": "https://github.com/aim4code"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "samples": [
+    {
+      "displayName": "Quick Start",
+      "description": "A minimal, self-contained navigation example: a UI root with two panels navigated via OpenScreenAction/PopPanelAction, plus a recipe for adding the App-shell scene loader.",
+      "path": "Samples~/QuickStart"
+    }
+  ]
 }

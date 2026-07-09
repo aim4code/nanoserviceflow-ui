@@ -1,0 +1,18 @@
+{
+    "name": "Aim4code.NanoServiceFlow.UI.App",
+    "rootNamespace": "Aim4code.NanoServiceFlow.UI.App",
+    "references": [
+        "Aim4code.NanoServiceFlow",
+        "Aim4code.NanoServiceFlow.UI",
+        "UniTask"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

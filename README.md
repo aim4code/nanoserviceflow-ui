@@ -44,7 +44,7 @@ Alternatively, you can manually add the scoped registry to your `Packages/manife
   }
 ],
 "dependencies": {
-  "com.aim4code.nanoserviceflow.ui": "0.1.0"
+  "com.aim4code.nanoserviceflow.ui": "0.2.0"
 }
 ```
 
@@ -54,14 +54,14 @@ You can also install the package directly from GitHub. Add the following depende
 
 ```json
 "dependencies": {
-  "com.aim4code.nanoserviceflow": "[https://github.com/aim4code/nanoserviceflow.git#v0.2.1](https://github.com/aim4code/nanoserviceflow.git#v0.2.1)",
-  "com.aim4code.nanoserviceflow.ui": "[https://github.com/aim4code/nanoserviceflow-ui.git#v0.1.0](https://github.com/aim4code/nanoserviceflow-ui.git#v0.1.0)",
+  "com.aim4code.nanoserviceflow": "[https://github.com/aim4code/nanoserviceflow.git#v0.3.0](https://github.com/aim4code/nanoserviceflow.git#v0.3.0)",
+  "com.aim4code.nanoserviceflow.ui": "[https://github.com/aim4code/nanoserviceflow-ui.git#v0.2.0](https://github.com/aim4code/nanoserviceflow-ui.git#v0.2.0)",
   "com.cysharp.unitask": "[https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask](https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask)"
 }
 ```
 
 > [!IMPORTANT]
-> **Version Determinism:** Notice the `#v0.1.0` at the end of the URL. If you omit the version tag, Unity will resolve the dependency using the latest commit on the default branch at the time of checkout. As the branch updates, this can lead to team members having different versions of the package installed, breaking version determinism. Always lock your Git dependencies to a specific release tag.
+> **Version Determinism:** Notice the `#v0.2.0` at the end of the URL. If you omit the version tag, Unity will resolve the dependency using the latest commit on the default branch at the time of checkout. As the branch updates, this can lead to team members having different versions of the package installed, breaking version determinism. Always lock your Git dependencies to a specific release tag.
 
 ## Quick Start
 
