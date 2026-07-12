@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-07-13
+
+### Fixed
+
+- **fix(editor):** the `UIPanelDropdown` (and sibling routing dropdowns) no longer overwrite serialized panel ids. The drawer previously wrote `property.stringValue` on every repaint and silently coerced a not-found value to the first list entry, so rendering the Inspector while the `UIRoutingDatabase` was empty or still importing (Unity startup, domain reload, or duplicating a panel) could rewrite authored ids and persist the wrong value on scene save. The drawer now writes only on real user selection, preserves unknown/empty values as a temporary `(missing!)` entry, wraps drawing in `BeginProperty`/`EndProperty`, and retries loading the database until the asset is available instead of latching a null result.
+
 ## [0.2.0] - 2026-07-09
 
 ### Changed
