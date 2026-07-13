@@ -12,11 +12,12 @@ namespace Aim4code.NanoServiceFlow.UI.Editor
     public abstract class UIRoutingDropdownDrawer : PropertyDrawer
     {
         private UIRoutingDatabase _database;
-        private bool _isInitialized = false;
 
         private void Initialize()
         {
-            if (_isInitialized) return;
+            // Keep retrying while the database is still null so a not-yet-imported
+            // asset self-heals on a later repaint instead of latching a null result.
+            if (_database != null) return;
 
             string[] guids = AssetDatabase.FindAssets("t:UIRoutingDatabase");
             if (guids.Length > 0)
@@ -24,8 +25,6 @@ namespace Aim4code.NanoServiceFlow.UI.Editor
                 string path = AssetDatabase.GUIDToAssetPath(guids[0]);
                 _database = AssetDatabase.LoadAssetAtPath<UIRoutingDatabase>(path);
             }
-
-            _isInitialized = true;
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -51,6 +50,8 @@ namespace Aim4code.NanoServiceFlow.UI.Editor
                 return;
             }
 
+            EditorGUI.BeginProperty(position, label, property);
+
             // --- Calculate Layout Space ---
             float buttonWidth = 45f;
             // Shrink the popup width to leave room for the button
@@ -68,20 +69,43 @@ namespace Aim4code.NanoServiceFlow.UI.Editor
             }
 
             string[] options = GetOptions(_database);
-        
+
             if (options == null || options.Length == 0)
             {
                 EditorGUI.BeginDisabledGroup(true);
                 EditorGUI.Popup(popupRect, label.text, 0, new[] { "[ List is Empty ]" });
                 EditorGUI.EndDisabledGroup();
+                EditorGUI.EndProperty();
                 return;
             }
 
-            int currentIndex = Mathf.Max(0, System.Array.IndexOf(options, property.stringValue));
-        
-            // Use the shrunken popupRect here instead of position!
-            currentIndex = EditorGUI.Popup(popupRect, label.text, currentIndex, options);
-            property.stringValue = options[currentIndex];
+            int storedIndex = System.Array.IndexOf(options, property.stringValue);
+
+            if (storedIndex < 0)
+            {
+                // Stored value is not in the list (empty, renamed, or a stale database
+                // during startup/import). Show it as a temporary extra entry so we never
+                // silently overwrite the authored value just by rendering the Inspector.
+                string[] display = new string[options.Length + 1];
+                display[0] = string.IsNullOrEmpty(property.stringValue)
+                    ? "[ None ]"
+                    : $"{property.stringValue}  (missing!)";
+                System.Array.Copy(options, 0, display, 1, options.Length);
+
+                EditorGUI.BeginChangeCheck();
+                int picked = EditorGUI.Popup(popupRect, label.text, 0, display);
+                if (EditorGUI.EndChangeCheck() && picked > 0)
+                    property.stringValue = options[picked - 1];
+            }
+            else
+            {
+                EditorGUI.BeginChangeCheck();
+                int picked = EditorGUI.Popup(popupRect, label.text, storedIndex, options);
+                if (EditorGUI.EndChangeCheck())
+                    property.stringValue = options[picked];
+            }
+
+            EditorGUI.EndProperty();
         }
 
         private void DrawMissingDatabaseError(Rect position, GUIContent label)
@@ -125,7 +149,6 @@ namespace Aim4code.NanoServiceFlow.UI.Editor
 
                 // Cache it instantly so the Inspector updates without needing a recompile
                 _database = db;
-                _isInitialized = true;
             }
         }
 
