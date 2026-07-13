@@ -21,7 +21,7 @@ jobs:
       - name: 🗄️ Cache Library
         uses: actions/cache@v4
         with:
-          path: TestProject/Library
+          path: ${{ github.workspace }}/TestProject/Library
           key: Library-${{ matrix.unityVersion }}-${{ hashFiles('package.json') }}
           restore-keys: |
             Library-${{ matrix.unityVersion }}-
@@ -30,7 +30,7 @@ jobs:
         uses: ./.github/actions/setup-unity
         with:
           unityVersion: ${{ matrix.unityVersion }}
-          projectName: 'TestProject'
+          projectName: ${{ github.workspace }}/TestProject
 
       - name: 🧪 Run Unity Tests
         uses: game-ci/unity-test-runner@v4
