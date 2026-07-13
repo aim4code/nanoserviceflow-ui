@@ -9,7 +9,9 @@ jobs:
   test:
     name: "Run Unity Tests"
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
+      fail-fast: false
       matrix:
         unityVersion:
         - 2022.3.62f3
@@ -41,5 +43,6 @@ jobs:
         with:
           projectPath: TestProject
           packageMode: false
+          testMode: EditMode
           unityVersion: ${{ matrix.unityVersion }}
           githubToken: ${{ secrets.GITHUB_TOKEN }}
