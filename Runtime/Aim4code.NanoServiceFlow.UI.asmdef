@@ -3,7 +3,8 @@
     "rootNamespace": "",
     "references": [
         "Aim4code.NanoServiceFlow",
-        "UniTask"
+        "UniTask",
+        "UnityEngine.AnimationModule"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
