@@ -22,15 +22,23 @@ namespace Aim4code.NanoServiceFlow.UI
         [SerializeField]
         private float _duration = 0.5f;
 
+        [Tooltip("Advance on unscaled time, so the transition still plays while the game is " +
+                 "paused (Time.timeScale = 0). Leave on unless this transition is meant to " +
+                 "freeze with the game.")]
+        [SerializeField]
+        private bool _ignoreTimeScale = true;
+
         [Header("Values")]
         [SerializeField]
         private float _hiddenValue = 0f;
-        
+
         [SerializeField]
         private float _shownValue = 1f;
 
         private Graphic _graphic;
         private Material _instancedMaterial;
+
+        private float DeltaTime => _ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
 
         private void Awake()
         {
@@ -52,7 +60,7 @@ namespace Aim4code.NanoServiceFlow.UI
             float time = 0;
             while (time < _duration && !ct.IsCancellationRequested)
             {
-                time += Time.deltaTime;
+                time += DeltaTime;
                 float currentVal = Mathf.Lerp(_hiddenValue, _shownValue, time / _duration);
                 _instancedMaterial.SetFloat(_propertyName, currentVal);
                 await UniTask.Yield(PlayerLoopTiming.Update, ct);
@@ -67,7 +75,7 @@ namespace Aim4code.NanoServiceFlow.UI
             float time = 0;
             while (time < _duration && !ct.IsCancellationRequested)
             {
-                time += Time.deltaTime;
+                time += DeltaTime;
                 float currentVal = Mathf.Lerp(_shownValue, _hiddenValue, time / _duration);
                 _instancedMaterial.SetFloat(_propertyName, currentVal);
                 await UniTask.Yield(PlayerLoopTiming.Update, ct);

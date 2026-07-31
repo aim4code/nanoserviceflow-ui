@@ -28,8 +28,10 @@ namespace Aim4code.NanoServiceFlow.UI.App
         {
             ServiceLocator.Dispatch(new PushPanelAction(_rootKey, _loadingPanelLocation, _loadingPanelId));
 
-            // Wait briefly to allow the UI to begin fading in before threaded CPU freezing
-            await UniTask.Delay(250);
+            // Wait briefly to allow the UI to begin fading in before threaded CPU freezing.
+            // Unscaled: a scene load may well be triggered from a pause menu with Time.timeScale
+            // at 0, and a scaled delay would never elapse — the loading screen would hang forever.
+            await UniTask.Delay(250, ignoreTimeScale: true);
 
             Debug.Log($"[AppUIService] Attempting to load scene: '{action.SceneName}'...");
             
@@ -62,8 +64,8 @@ namespace Aim4code.NanoServiceFlow.UI.App
 
             _state.LoadingProgress.Value = 1f;
             
-            // Wait half a second for visual polish
-            await UniTask.Delay(500);
+            // Wait half a second for visual polish (unscaled, same reason as above)
+            await UniTask.Delay(500, ignoreTimeScale: true);
 
             // Tell Unity to activate the scene
             Debug.Log($"[AppUIService] '{action.SceneName}' loaded into memory. Activating now!");
