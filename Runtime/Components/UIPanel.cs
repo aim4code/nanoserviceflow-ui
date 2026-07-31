@@ -78,7 +78,7 @@ namespace Aim4code.NanoServiceFlow.UI
         {
             bool shouldBeVisible = activePanels.Contains(PanelId);
             if (shouldBeVisible == _isVisible) return;
-        
+
             _isVisible = shouldBeVisible;
 
             _canvasGroup.interactable = false;
@@ -86,17 +86,20 @@ namespace Aim4code.NanoServiceFlow.UI
 
             var token = this.GetCancellationTokenOnDestroy();
 
-            if (_isVisible)
+            if (shouldBeVisible)
             {
                 // Yield one frame to ensure any hiding panels grab the lock first
                 await UniTask.Yield(PlayerLoopTiming.Update, token);
+                if (IsSuperseded(shouldBeVisible)) return;
 
                 await _locationProvider.TransitionLock.WaitAsync(token);
                 try
                 {
+                    if (IsSuperseded(shouldBeVisible)) return;
+
                     if (_transition != null) await _transition.PlayShowAsync(token);
                     else _canvasGroup.alpha = 1f;
-                
+
                     _canvasGroup.interactable = true;
                     _canvasGroup.blocksRaycasts = true;
                 }
@@ -111,6 +114,8 @@ namespace Aim4code.NanoServiceFlow.UI
                 await _locationProvider.TransitionLock.WaitAsync(token);
                 try
                 {
+                    if (IsSuperseded(shouldBeVisible)) return;
+
                     if (_transition != null) await _transition.PlayHideAsync(token);
                     else _canvasGroup.alpha = 0f;
                 }
@@ -120,6 +125,19 @@ namespace Aim4code.NanoServiceFlow.UI
                 }
             }
         }
+
+        /// <summary>
+        /// Has the state moved on while this transition was waiting? There are two awaits before a
+        /// transition actually starts — a frame yield, then the location's <c>TransitionLock</c> —
+        /// and the panel's state can flip during either.
+        ///
+        /// Without this check the last transition to *finish* decides the final alpha rather than
+        /// the current state, so a show and a hide raised in quick succession can leave the panel
+        /// faded in while the router believes it is closed. That combination is unrecoverable from
+        /// the UI: the panel is no longer on its location stack, so a Pop finds nothing to remove,
+        /// the active set never changes, and this handler is never called again to put it away.
+        /// </summary>
+        private bool IsSuperseded(bool intent) => _isVisible != intent;
 
         private void OnDestroy()
         {

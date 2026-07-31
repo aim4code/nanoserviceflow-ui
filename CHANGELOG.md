@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-31
+
+### Changed
+
+- **feat!:** all three transitions (`FadeUITransition`, `AnimatorUITransition`, `MaterialPropertyUITransition`) now advance on **unscaled time by default**, via a new `Ignore Time Scale` field. **BREAKING (behavioural):** existing components pick this up automatically — the field has no serialized value in already-authored scenes, so Unity falls back to the `true` initializer. Set it to `false` on any transition that is genuinely meant to freeze with the game.
+
+  The old behaviour was a soft lock, not a cosmetic issue: every transition accumulated `Time.deltaTime`, so at `Time.timeScale = 0` the `while (time < _duration)` loop never exited. A pause menu opened from a frozen game stayed at `alpha 0`, `UIPanel` never restored `interactable`, and the panel's `UILocationProvider.TransitionLock` was held forever — nothing in that location could transition again.
+
+  `AnimatorUITransition` additionally sets `Animator.updateMode` from the same flag (`UnscaledTime`/`Normal`) in `Awake`: waiting out the duration on an unscaled clock is pointless if the clip it drives is still frozen.
+
+### Fixed
+
+- **fix(components):** `UIPanel` no longer lets a stale transition decide its final visibility. A show and a hide raised in quick succession both queue on the location's `TransitionLock`, and the show additionally yields a frame before queueing — so the transition that finished *last* set the alpha, regardless of the current state. A panel could end up faded in while the router considered it closed, which is unrecoverable from the UI: it is no longer on its location stack, so `PopPanelAction` finds nothing to remove, the active set never changes, and the panel's state handler is never invoked again to put it away. Each transition now re-checks the panel's intent after every await and abandons if it has been superseded.
+
+- **fix(app):** `AppUIService.OnLoadSceneAsync` passes `ignoreTimeScale: true` to both of its `UniTask.Delay` calls. Scene loads are commonly triggered from a pause menu (Restart / Exit to menu) with `Time.timeScale` at 0, where the previously scaled delays never elapsed and the loading screen hung indefinitely.
+
 ## [0.2.1] - 2026-07-13
 
 ### Fixed

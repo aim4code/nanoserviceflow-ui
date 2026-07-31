@@ -25,21 +25,35 @@ namespace Aim4code.NanoServiceFlow.UI
         [SerializeField]
         private float _duration = 0.5f;
 
+        [Tooltip("Advance on unscaled time, so the transition still plays while the game is " +
+                 "paused (Time.timeScale = 0). This also drives the Animator's own update mode — " +
+                 "waiting out the duration is pointless if the clip it plays is frozen.")]
+        [SerializeField]
+        private bool _ignoreTimeScale = true;
+
         private Animator _animator;
+
+        private float DeltaTime => _ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
 
         private void Awake()
         {
             _animator = GetComponent<Animator>();
+
+            // The wait loop below and the clip itself must agree on a clock: an unscaled wait over
+            // a scaled Animator completes on time with nothing having visibly moved.
+            _animator.updateMode = _ignoreTimeScale
+                ? AnimatorUpdateMode.UnscaledTime
+                : AnimatorUpdateMode.Normal;
         }
 
         public async UniTask PlayShowAsync(CancellationToken ct = default)
         {
             _animator.SetTrigger(_showTrigger);
-            
+
             float time = 0;
             while (time < _duration && !ct.IsCancellationRequested)
             {
-                time += Time.deltaTime;
+                time += DeltaTime;
                 await UniTask.Yield(PlayerLoopTiming.Update, ct);
             }
         }
@@ -47,11 +61,11 @@ namespace Aim4code.NanoServiceFlow.UI
         public async UniTask PlayHideAsync(CancellationToken ct = default)
         {
             _animator.SetTrigger(_hideTrigger);
-            
+
             float time = 0;
             while (time < _duration && !ct.IsCancellationRequested)
             {
-                time += Time.deltaTime;
+                time += DeltaTime;
                 await UniTask.Yield(PlayerLoopTiming.Update, ct);
             }
         }
